@@ -2,6 +2,12 @@ const redux = require("redux");
 const createStore = redux.createStore;
 const combineReducer = redux.combineReducers;
 
+const applyMiddleware = redux.applyMiddleware;
+
+const reduxlogger = require('redux-logger')
+const logger = reduxlogger.logger
+
+
 const CAKE_ORDER = "CAKE_ORDER";
 const RESTOCK_CAKE = "RESTOCK_CAKE";
 
@@ -83,13 +89,18 @@ const IceCreamreducer = (state = IceCreaminitial_State, action) => {
         return state;
     }
   };
-  
-const store = createStore(combineReducer({}));
 
-console.log("initial State", store.getState());
+const rootReducer = combineReducer({
+  cake:Cakereducer,
+  iceCream:IceCreamreducer
+})
+const store = createStore(rootReducer,applyMiddleware(logger));
+
+// console.log("initial State", store.getState());
 
 const unsubscribe = store.subscribe(() =>
-  console.log("Updated State", store.getState())
+  // console.log("Updated State", store.getState())
+  {}
 );
 
 //dispatch action
@@ -99,7 +110,13 @@ store.dispatch(cakeOrdered());
 store.dispatch(cakeOrdered());
 store.dispatch(RestockCake(3))
 
+store.dispatch(IceCreamOrdered())
+store.dispatch(IceCreamOrdered())
+
+// if you want to access state of cake  - state.cake.numOfcakes same as for icecream
+
 unsubscribe();
 
 // after unsubscribe redux store dont notfiy that state updated
 //store.dispatch(cakeOrdered());
+
